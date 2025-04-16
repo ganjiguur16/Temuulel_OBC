@@ -6,11 +6,11 @@
 
 The onboard computer (OBC) is responsible for handling communication, telemetry, command processing, and mission-critical operations. This repository is focused on:
 
-- Bare-metal embedded programming for STM32
+- Bare-metal embedded programming for PIC18
 - GPIO control, UART/SPI communication
-- Power-on reset counter and LED behavior logic
-- Button-based state switching
+- Handel sub system data streams in order 
 - Minimal dependencies (no dynamic memory / malloc)
+  
 
 ## 📁 Project Structure
 - IDK just started
@@ -26,10 +26,8 @@ The onboard computer (OBC) is responsible for handling communication, telemetry,
 ## ✅ Features
 
 - [x] Shutdown counter with persistent storage (EEPROM or similar)
-- [x] LED behavior changes based on button input:
-  - **Scroll mode**: LEDs shift one at a time
-  - **Fill mode**: LEDs light up progressively
-- [x] SPI and UART channel support for sensor and communication interfaces
+- [x] RTCC timmer
+- [x] Flash memory opperations
 - [ ] CRC integrity checks (future implementation)
 - [ ] Telemetry packet handling
 
