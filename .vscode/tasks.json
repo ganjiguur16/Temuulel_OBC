@@ -1,0 +1,148 @@
+{
+  "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "picFlavor",
+      "type": "pickString",
+      "description": "Select: +FH(16bit-PIC18) +FB(12bit-PIC12) +FM(14bit-PIC16) +FD(24bit-PIC24)",
+      "options": ["+FH", "+FB", "+FM", "+FD"],
+      "default": "+FH"
+    }
+  ],
+  "tasks": [
+    {
+      "label": "- PICC Build -",
+      "type": "shell",
+      "command": "C:\\Program Files (x86)\\PICC\\ccscon.exe",
+      "args": [
+        "-M",
+        "-T",
+        "-A",
+        "-Z",
+        "${input:picFlavor}",
+        "+EA",
+        "+P02",
+        "+J",
+        "+STDOUT",
+        "+O8hex",
+        "${file}"
+      ],
+      "presentation": {
+        "echo": true,
+        "revealProblems": "onProblem",
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        {
+          "owner": "custom",
+          "fileLocation": [
+            "absolute"
+          ],
+          "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+(Info|Error|Warning)#(\\d+)\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "code": 5,
+            "message": 6
+          }
+        },
+        {
+          "owner": "build-summary",
+          "fileLocation": [
+            "absolute"
+          ],
+          "severity": "info",
+          "pattern": {
+            "regexp": "^(Build.*|Memory usage:.*|.*Errors,.*Warnings.*)$",
+            "line": 1,
+            "column": 1,
+            "message": 0
+          }
+        }
+      ]
+    },
+    {
+      "label": "PICC Clean",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "Remove-Item",
+        "-Path",
+        "${fileDirname}\\*",
+        "-Include",
+        "${fileBasenameNoExtension}.sym,${fileBasenameNoExtension}.cod,${fileBasenameNoExtension}.cof,${fileBasenameNoExtension}.err,${fileBasenameNoExtension}.esym,${fileBasenameNoExtension}.xsym,${fileBasenameNoExtension}.STA,${fileBasenameNoExtension}.tre",
+        "-Force",
+        "-ErrorAction",
+        "Continue"
+      ],
+      "presentation": {
+        "echo": true,
+        "revealProblems": "onProblem",
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PICC CCSLOAD",
+      "type": "shell",
+      "command": "C:\\Program Files (x86)\\PICC\\ccsload.exe",
+      "args": [
+        "WRITE=${fileDirname}\\${fileBasenameNoExtension}.hex"
+      ],
+      "presentation": {
+        "echo": true,
+        "revealProblems": "onProblem",
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PICC SIOW Terminal",
+      "type": "shell",
+      "command": "C:\\Program Files (x86)\\PICC\\siow.exe",
+      "args": [""],
+      "problemMatcher": []
+    },
+    {
+      "label": "PICC PCW Wizard",
+      "type": "shell",
+      "command": "C:\\Program Files (x86)\\PICC\\Pcwwiz.exe",
+      "args": [""],
+      "problemMatcher": []
+    },
+    {
+      "label": "PICC PCD Wizard",
+      "type": "shell",
+      "command": "C:\\Program Files (x86)\\PICC\\Pcdwiz.exe",
+      "args": [""],
+      "problemMatcher": []
+    }
+  ]
+}

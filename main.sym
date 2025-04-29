@@ -1,0 +1,125 @@
+000     @SCRATCH
+ na     @GETCH_1_.@SCRATCH1
+ na     @GETCH_2_.@SCRATCH1
+ na     @SPI_XFER_1.@SCRATCH2
+ na     @SPI_XFER_2.@SCRATCH2
+ na     @SPI_XFER_3.@SCRATCH2
+ na     SECTOR_ERASE_OF_ADCS.@SCRATCH5
+ na     WRITE_DATA_NBYTES.@SCRATCH5
+ na     @PSTRINGCN_996.@SCRATCH3
+ na     @DIV88.@SCRATCH1
+ na     @PRINTF_D_996.@SCRATCH4
+ na     WRITE_DATA_NBYTES_COM.@SCRATCH5
+ na     WRITE_DATA_NBYTES_ADCS.@SCRATCH5
+ na     READ_DATA_NBYTES.@SCRATCH5
+ na     READ_DATA_NBYTES_COM.@SCRATCH5
+ na     READ_DATA_NBYTES_ADCS.@SCRATCH5
+ na     READ_CHIP_ID_OF.@SCRATCH2
+ na     READ_CHIP_ID_OF_COM.@SCRATCH2
+ na     READ_CHIP_ID_OF_ADCS.@SCRATCH2
+ na     startup_freeze.@SCRATCH1
+ na     @PSTRINGC_996.@SCRATCH3
+ na     adcs_mission_mode.@SCRATCH5
+ na     get_data.@SCRATCH4
+ na     send_data.@SCRATCH1
+ na     @PSTRINGR_996.@SCRATCH2
+ na     store_eps_data.@SCRATCH2
+ na     print_table.@SCRATCH4
+ na     @MULFF.@SCRATCH3
+ na     @DIVFF.@SCRATCH6
+ na     write_to_main_flash_menu.@SCRATCH4
+ na     @MUL3232.@SCRATCH6
+ na     @SCANF_X32_998.@SCRATCH6
+ na     @SCANF_X8_998.@SCRATCH3
+ na     handle_main_flash_memory.@SCRATCH2
+ na     @SCANF_DUO8_998.@SCRATCH3
+ na     handle_set_time.@SCRATCH1
+ na     MAIN.@SCRATCH1
+001     @SCRATCH
+002     @SCRATCH
+003     @SCRATCH
+EEF.0   MDBIT
+EEF.3   MDOUT
+F08     CCP_7
+F08     CCP_7_LOW
+F09     CCP_7_HIGH
+F0B     CCP_6
+F0B     CCP_6_LOW
+F0C     CCP_6_HIGH
+F0E     CCP_5
+F0E     CCP_5_LOW
+F0F     CCP_5_HIGH
+F11     CCP_4
+F11     CCP_4_LOW
+F12     CCP_4_HIGH
+F21     DSGPR3
+F22     DSGPR2
+F23     DSGPR1
+F24     DSGPR0
+F41     CCP_10
+F41     CCP_10_LOW
+F42     CCP_10_HIGH
+F44     CCP_9
+F44     CCP_9_LOW
+F45     CCP_9_HIGH
+F47     CCP_8_LOW
+F47     CCP_8
+F48     CCP_8_HIGH
+F4A     CCP_3_LOW
+F4A     CCP_3
+F4B     CCP_3_HIGH
+F4F     CCP_2
+F4F     CCP_2_LOW
+F50     CCP_2_HIGH
+F83     PSP_DATA
+FBA     CCP_1_LOW
+FBA     CCP_1
+FBB     CCP_1_HIGH
+FC4.0   C1OUT
+FC4.1   C2OUT
+FC4.2   C3OUT
+FE1-FE2 @READ_PACKED_MEMORY.P1
+FE1-FE2 @WRITE_PACKED_MEMORY.P2
+FE9-FEA @READ_PROGRAM_MEMORY.P1
+FE9-FEA @WRITE_PACKED_MEMORY.P2
+FE9-FEA @WRITE_PROGRAM_MEMORY.P3
+FE9-FEA @READ_PACKED_MEMORY.P4
+FF6-FF8 @READ_PROGRAM_MEMORY.P1
+FF6-FF8 @WRITE_PROGRAM_MEMORY.P2
+
+ROM Allocation:
+
+Project Directory:
+    C:\Users\ganga\OneDrive\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\
+
+Project Files:
+    main.c                                                  [29-Apr-25 21:47  CRC=34900CAD]
+    main.h                                                  [29-Apr-25 21:45  CRC=0421628E]
+    ..\..\..\..\..\..\..\..\..\..\Program Files (x86)\PICC\devices\18F67J94.h [01-Oct-15 11:55  CRC=4BEEBE2D]
+    MT25Q.h                                                 [29-Apr-25 17:50  CRC=65621A8F]
+    ..\..\..\..\..\..\..\..\..\..\Program Files (x86)\PICC\drivers\string.h [26-Mar-15 12:34  CRC=C4814297]
+    ..\..\..\..\..\..\..\..\..\..\Program Files (x86)\PICC\drivers\stddef.h [05-Sep-14 11:47  CRC=897CEC6C]
+    ..\..\..\..\..\..\..\..\..\..\Program Files (x86)\PICC\drivers\ctype.h [03-Jan-08 14:55  CRC=2D1F019F]
+    ..\..\..\..\..\..\..\..\..\..\Program Files (x86)\PICC\drivers\stdbool.h [21-May-12 11:29  CRC=815AEDE8]
+
+Source signature=67D55469
+Program memory checksum=0000
+Hex file CRC=0000
+
+Units:
+    C:\Users\ganga\OneDrive\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main (main)
+
+Compiler Settings:
+    Processor:      PIC18F67J94
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Compile Mode:   CCS5
+
+Output Files:
+    XREF file:   main.xsym
+    Errors:      main.err
+    Ext Symbols: main.esym
+    Symbols:     main.sym
