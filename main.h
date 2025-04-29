@@ -11,12 +11,14 @@
  #ifdef	__cplusplus
  extern "C" {
  #endif
+
  #include <18F67J94.h>
- #device ADC=16
- #device ICD=TRUE
+
  #include <string.h>
 #include <stdbool.h>
-//#include <mt25q.h>
+
+// #device ADC=16
+// #device ICD=TRUE
 // #include <main_functions.h>
  #FUSES NOWDT NOBROWNOUT    
  #use delay(clock=16M, crystal)
@@ -37,6 +39,8 @@
  #define SPIPORT3 MISSION_FM  //cam system futher added 
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      
+
+
  //Flash memory chip select pins and mux control 
  #define CS_PIN_1 PIN_E2 //OBC_FLASH_SELECT
  #define CS_PIN_COM PIN_B3 //COM_CHIP_SELECT
@@ -628,8 +632,10 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      set_clock(write_clock);
      rtc_write(&write_clock);
      rtc_read(&read_clock);
-     fprintf(EXT, "\r%02u/%02u/20%02u %02u:%02u:%02u", read_clock.tm_mon, read_clock.tm_mday, read_clock.tm_year, read_clock.tm_hour, read_clock.tm_min, read_clock.tm_sec);
+     read_clock.tm_year - 2000; 
+     fprintf(EXT, "\r%02u/%02u/20%02u %02u:%02u:%02u", read_clock.tm_mon, read_clock.tm_mday, read_clock.tm_year , read_clock.tm_hour, read_clock.tm_min, read_clock.tm_sec);
 
+     fprintf(EXT, "RTCC setup finished!\n");
      fprintf(EXT, "RTCC setup finished!\n");
  
  }
@@ -1285,6 +1291,10 @@ void main_menu(void) {
 //        printf("\n");
 //    }
 //}
+
+#include <flashoperation.h>
+
+
 
  
  #ifdef	__cplusplus

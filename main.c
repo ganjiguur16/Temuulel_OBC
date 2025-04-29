@@ -1,4 +1,3 @@
-
 #include <main.h>
 
 char bichig[25] = "test data update of MAIN"; //test data for testing 
@@ -20,11 +19,13 @@ void main() {
     fprintf(EXT, "Reading chip ID of main\n");
     // READ_CHIP_ID_GENERIC(SPIPORT, CS_PIN_1, -1);  // Pass the array to be filled by the function
     fprintf(EXT, "Reading chip ID of COM\n");
+    fprintf(EXT, "Reading chip ID of COM\n");
     READ_CHIP_ID_OF_COM();
     fprintf(EXT, "Reading chip ID of ADCS\n");
     READ_CHIP_ID_OF_ADCS();
     fprintf(EXT, "Done reading chip ID\n");
     delay_ms(1000);
+
 
     //------------------------write_flash_memory--------------------------
     // Write and read from MAIN flash memory 
@@ -32,8 +33,7 @@ void main() {
     WRITE_DATA_NBYTES (0x00005000, bichig, sizeof(bichig));
     delay_ms(1000);
     
-    read_data = 
-    (0x00005000, sizeof(bichig));
+    read_data = (0x00005000, sizeof(bichig));
     delay_ms(1000);
     for (int i = 0; i < sizeof(bichig); i++) {
         fprintf(EXT, "%c", read_data[i]);
@@ -74,6 +74,8 @@ void main() {
     while (TRUE) {
         if (kbhit(EXT)) {
             main_menu();
+            // LOOP_DC_STATUS_ADDRESS();
+            fprintf(EXT, "%d\n",FLAG_DATA_ADDRESS_END);
         }
     }
 }
