@@ -1,0 +1,23 @@
+Compiling C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main on 11-Jan-26 at 19:33
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:430:1:  Warning#204  Condition always FALSE
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:633:1:  Warning#207  Code has no effect
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:1394:1:  Warning#203  Condition always TRUE
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:668:6:  Warning#202  Variable never used:   adcs_mission
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:669:6:  Warning#202  Variable never used:   adcs_mag
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:670:6:  Warning#202  Variable never used:   adcs_gyro
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:671:6:  Warning#202  Variable never used:   last_adcs
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:678:6:  Warning#202  Variable never used:   adcs_status_address
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:679:6:  Warning#202  Variable never used:   adcs_gyro_first_address
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:684:19:  Warning#202  Variable never used:   local_buffer
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:759:19:  Warning#202  Variable never used:   local_buffer
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:834:6:  Warning#202  Variable never used:   cmd
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:1060:28:  Warning#202  Variable never used:   choice
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.h:1091:20:  Warning#202  Variable never used:   data
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.c:5:6:  Warning#202  Variable never used:   bichigadcs
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.c:9:15:  Warning#202  Variable never used:   local_buffer
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.c:10:19:  Warning#202  Variable never used:   adcs_status
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.c:11:20:  Warning#202  Variable never used:   last_adcs_address
+C:\Users\ganga\Documents\------TEMUULEL------\TEST_REPORT\Enginering model\CODE\VSbased development\OBC\main.c:12:20:  Warning#202  Variable never used:   first_adcs_data_address
+      Memory usage:   ROM=15%      RAM=13% - 22%
+      0 Errors,  19 Warnings.
+Build Successful.

@@ -20,23 +20,21 @@
 // #device ADC=16
 // #device ICD=TRUE
 // #include <main_functions.h>
- #FUSES NOWDT NOBROWNOUT    
+ #FUSES NOWDT NOBROWNOUT NOPROTECT NOIESO 
  #use delay(clock=16M, crystal)
   
  
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  #use rs232(baud=9600, parity=N, xmit=PIN_E5, rcv=PIN_E4, bits=8, stream=EPS) //EPS DATA ACQUISITION
- #use rs232(baud=9600, parity=N, xmit=PIN_C6, rcv=PIN_C7, bits=8, stream=EXT) //MAIN RAB Rear access board 
- #use rs232(baud=57600, parity=N, xmit=PIN_D2, rcv=PIN_D3, bits=8, stream=COM, FORCE_SW) //MAIN COM Communication, send CW data 
- #use rs232(baud=57600, parity=N, xmit=PIN_F7, rcv=PIN_F6, bits=8, stream=CAM, FORCE_SW) //MAIN CAM Communicationx
+ #use rs232(baud=115200, parity=N, xmit=PIN_C6, rcv=PIN_C7, bits=8, stream=EXT) //MAIN RAB Rear access board 
+ #use rs232(baud=115200, parity=N, xmit=PIN_D2, rcv=PIN_D3, bits=8, stream=COM, FORCE_SW) //MAIN COM Communication, send CW data 
+ #use rs232(baud=115200, parity=N, xmit=PIN_F6, rcv=PIN_F7, bits=8, stream=CAM, FORCE_SW) //MAIN CAM Communication that will sent camara data ov5642 
  #use spi(MASTER, CLK=PIN_E1, DI=PIN_E0, DO=PIN_E6,  BAUD=10000, BITS=8, STREAM=MAIN_FM, MODE=0) //MAIN flash memory port
  #use spi(MASTER, CLK=PIN_B2, DI=PIN_B5, DO=PIN_B4,  BAUD=10000, BITS=8, STREAM=COM_FM, MODE=0) //COM shared flash memory port
  #use spi(MASTER, CLK=PIN_A3, DI=PIN_A0, DO=PIN_A1,  BAUD=10000, BITS=8, STREAM=MISSION_FM, MODE=0) //ADCS shared flash memory port, Camera module (ovcam,mvcam) only can access via mux selcent
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  //SPI Stream alter name 
- #define SPIPORT MAIN_FM
- #define SPIPORT2 COM_FM
- #define SPIPORT3 MISSION_FM  //cam system futher added 
+//  #define SPIPORT MAIN_FM
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      
 
@@ -156,7 +154,7 @@
  
  void WRITE_ENABLE_OF(){
   output_low(CS_PIN_1);
-  spi_xfer(SPIPORT,ENABLE_WRITE);                //Send 0x06
+  spi_xfer(MAIN_FM,ENABLE_WRITE);                //Send 0x06
   output_high(CS_PIN_1);  
   return;
  }
@@ -166,7 +164,7 @@
      output_low(CS_PIN_COM);
      // Lower MX to connect to flash device
      output_low(MX_PIN_COM);
-     spi_xfer(SPIPORT2,ENABLE_WRITE);                //Send 0x06
+     spi_xfer(COM_FM,ENABLE_WRITE);                //Send 0x06
      output_high(CS_PIN_COM);
      output_high(MX_PIN_COM);
   return;
@@ -177,7 +175,7 @@
      output_low(MX_PIN_ADCS);
       // Lower CS to select the SPI device
      output_low(CS_PIN_MISSION);
-     spi_xfer(SPIPORT3,ENABLE_WRITE);                //Send 0x06
+     spi_xfer(MISSION_FM,ENABLE_WRITE);                //Send 0x06
      output_high(CS_PIN_MISSION);  
      output_high(MX_PIN_ADCS);
   return;
@@ -187,7 +185,7 @@
     output_low(MX_PIN_MVCAM);
     // LowerCS pin to activate the flash device
     output_low(CS_PIN_MISSION);
-    spi_xfer(SPIPORT3,ENABLE_WRITE);                //Send 0x06
+    spi_xfer(MISSION_FM,ENABLE_WRITE);                //Send 0x06
     output_high(CS_PIN_MISSION);
     output_high(MX_PIN_MVCAM);
   return;
@@ -203,11 +201,11 @@
     output_low(CS_PIN);
 
     if(STREAM == 1) {
-        spi_xfer(SPIPORT, ENABLE_WRITE);  // Send ENABLE_WRITE command
+        spi_xfer(MAIN_FM, ENABLE_WRITE);  // Send ENABLE_WRITE command
     } else if(STREAM == 2) {
-        spi_xfer(SPIPORT2, ENABLE_WRITE);  // Send ENABLE_WRITE command
+        spi_xfer(COM_FM, ENABLE_WRITE);  // Send ENABLE_WRITE command
     } else if(STREAM == 3) {
-        spi_xfer(SPIPORT3, ENABLE_WRITE);  // Send ENABLE_WRITE command
+        spi_xfer(MISSION_FM, ENABLE_WRITE);  // Send ENABLE_WRITE command
     } 
     // Raise CS to deselect the SPI device
     output_high(CS_PIN);
@@ -236,11 +234,11 @@
     delay_us(2);  // Small delay for stabilization
 
     // Send ERASE command and address
-    spi_xfer(SPIPORT3, ERASE_SECTOR);
-    spi_xfer(SPIPORT3, address[0]);
-    spi_xfer(SPIPORT3, address[1]);
-    spi_xfer(SPIPORT3, address[2]);
-    spi_xfer(SPIPORT3, address[3]);
+    spi_xfer(MISSION_FM, ERASE_SECTOR);
+    spi_xfer(MISSION_FM, address[0]);
+    spi_xfer(MISSION_FM, address[1]);
+    spi_xfer(MISSION_FM, address[2]);
+    spi_xfer(MISSION_FM, address[3]);
 
     // Deselect SPI device and MUX
     output_high(CS_PIN_MISSION);
@@ -264,18 +262,18 @@
      output_low(CS_PIN_1);
      delay_us(2);  // Small delay for stabilization
      // Send WRITE command and address
-     spi_xfer(SPIPORT, WRITE_PAGE);
-     spi_xfer(SPIPORT, adsress[0]);
-     spi_xfer(SPIPORT, adsress[1]);
-     spi_xfer(SPIPORT, adsress[2]);
-     spi_xfer(SPIPORT, adsress[3]);
+     spi_xfer(MAIN_FM, WRITE_PAGE);
+     spi_xfer(MAIN_FM, adsress[0]);
+     spi_xfer(MAIN_FM, adsress[1]);
+     spi_xfer(MAIN_FM, adsress[2]);
+     spi_xfer(MAIN_FM, adsress[3]);
      // Write data bytes
      for (int i = 0; i < data_number; i++) {
-         spi_xfer(SPIPORT, data[i]);  // Send data byte
+         spi_xfer(MAIN_FM, data[i]);  // Send data byte
          fprintf(EXT,"%02c", data[i]);    // Print each byte as hex (optional)
      }
  //    for (int i = 0; i < data_number; i++) {
- //        spi_xfer(SPIPORT, data[i]);  // Send data byte
+ //        spi_xfer(MAIN_FM, data[i]);  // Send data byte
  //        fprintf(EXT,"%02d", data[i]);    // Print each byte as hex (optional)
  //    } for futhre use this is for displaying in hex format 
      
@@ -302,14 +300,14 @@
      output_low(CS_PIN_COM);
      delay_us(2);  // Small delay for stabilization
      // Send WRITE command and address
-     spi_xfer(SPIPORT2, WRITE_PAGE);
-     spi_xfer(SPIPORT2, adsress[0]);
-     spi_xfer(SPIPORT2, adsress[1]);
-     spi_xfer(SPIPORT2, adsress[2]);
-     spi_xfer(SPIPORT2, adsress[3]);
+     spi_xfer(COM_FM, WRITE_PAGE);
+     spi_xfer(COM_FM, adsress[0]);
+     spi_xfer(COM_FM, adsress[1]);
+     spi_xfer(COM_FM, adsress[2]);
+     spi_xfer(COM_FM, adsress[3]);
      // Write data bytes
      for (int i = 0; i < data_number; i++) {
-         spi_xfer(SPIPORT2, data[i]);  // Send data byte
+         spi_xfer(COM_FM, data[i]);  // Send data byte
          fprintf(EXT,"%02c", data[i]);    // Print each byte as hex (debugging purpose)
      }
      
@@ -335,14 +333,14 @@
      output_low(CS_PIN_MISSION);
      delay_us(2);  // Small delay for stabilization
      // Send WRITE command and address
-     spi_xfer(SPIPORT3, WRITE_PAGE);
-     spi_xfer(SPIPORT3, adsress[0]);
-     spi_xfer(SPIPORT3, adsress[1]);
-     spi_xfer(SPIPORT3, adsress[2]);
-     spi_xfer(SPIPORT3, adsress[3]);
+     spi_xfer(MISSION_FM, WRITE_PAGE);
+     spi_xfer(MISSION_FM, adsress[0]);
+     spi_xfer(MISSION_FM, adsress[1]);
+     spi_xfer(MISSION_FM, adsress[2]);
+     spi_xfer(MISSION_FM, adsress[3]);
      // Write data bytes
      for (int i = 0; i < data_number; i++) {
-         spi_xfer(SPIPORT3, data[i]);  // Send data byte
+         spi_xfer(MISSION_FM, data[i]);  // Send data byte
          fprintf(EXT,"%02c", data[i]);    // Print each byte as hex (debugging purpose)
      }
      
@@ -366,16 +364,16 @@
      output_low(CS_PIN_1);  // Select SPI device
  
      // Send READ DATA COMMAND (0x13 or appropriate for your flash chip)
-     spi_xfer(SPIPORT, READ_DATA_BYTES);
+     spi_xfer(MAIN_FM, READ_DATA_BYTES);
      // Send address bytes
-     spi_xfer(SPIPORT, adsress[0]);
-     spi_xfer(SPIPORT, adsress[1]);
-     spi_xfer(SPIPORT, adsress[2]);
-     spi_xfer(SPIPORT, adsress[3]);
+     spi_xfer(MAIN_FM, adsress[0]);
+     spi_xfer(MAIN_FM, adsress[1]);
+     spi_xfer(MAIN_FM, adsress[2]);
+     spi_xfer(MAIN_FM, adsress[3]);
  
      // Read the requested number of bytes
      for (int i = 0; i < data_number && i < 256; i++) {  // Avoid overflow
-         Data_return[i] = spi_xfer(SPIPORT, 0x00);  // Send dummy byte to receive data
+         Data_return[i] = spi_xfer(MAIN_FM, 0x00);  // Send dummy byte to receive data
          fprintf(EXT, "%c", Data_return[i]);  // Print each byte as hex
      }
  
@@ -401,16 +399,16 @@
      output_low(CS_PIN_COM);  // Select SPI device
  
      // Send READ DATA COMMAND
-     spi_xfer(SPIPORT2, READ_DATA_BYTES);
+     spi_xfer(COM_FM, READ_DATA_BYTES);
      // Send address bytes
-     spi_xfer(SPIPORT2, adsress[0]);
-     spi_xfer(SPIPORT2, adsress[1]);
-     spi_xfer(SPIPORT2, adsress[2]);
-     spi_xfer(SPIPORT2, adsress[3]);
+     spi_xfer(COM_FM, adsress[0]);
+     spi_xfer(COM_FM, adsress[1]);
+     spi_xfer(COM_FM, adsress[2]);
+     spi_xfer(COM_FM, adsress[3]);
  
      // Read the requested number of bytes
      for (int i = 0; i < data_number && i < 256; i++) {
-         Data_return[i] = spi_xfer(SPIPORT2, 0x00);  // Send dummy byte to receive data
+         Data_return[i] = spi_xfer(COM_FM, 0x00);  // Send dummy byte to receive data
          fprintf(EXT, "%c", Data_return[i]);         // Print each byte
      }
  
@@ -443,19 +441,19 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
     output_low(CS_PIN_MISSION);  // Select SPI device
 
     // Send READ DATA COMMAND
-    spi_xfer(SPIPORT3, READ_DATA_BYTES);
+    spi_xfer(MISSION_FM, READ_DATA_BYTES);
     // Send address bytes
-    spi_xfer(SPIPORT3, adsress[0]);
-    spi_xfer(SPIPORT3, adsress[1]);
-    spi_xfer(SPIPORT3, adsress[2]);
-    spi_xfer(SPIPORT3, adsress[3]);
+    spi_xfer(MISSION_FM, adsress[0]);
+    spi_xfer(MISSION_FM, adsress[1]);
+    spi_xfer(MISSION_FM, adsress[2]);
+    spi_xfer(MISSION_FM, adsress[3]);
 
     // Read the requested number of bytes
-    for (int i = 0; i < data_number; i++) {
-        Data_return[i] = spi_xfer(SPIPORT3, 0x00);  // Send dummy byte to receive data
-        fprintf(EXT, "  0x%02x", Data_return[i]);  // Print each byte (optional)
-        fprintf(EXT, "\n");
-    }
+    // for (int i = 0; i < data_number; i++) {
+    //     Data_return[i] = spi_xfer(MISSION_FM, 0x00);  // Send dummy byte to receive data
+    //     fprintf(EXT, "  0x%02x", Data_return[i]);  // Print each byte (optional)
+    //     fprintf(EXT, "\n");
+    // }
 
     output_high(CS_PIN_MISSION);  // Deselect SPI device
     output_high(MX_PIN_ADCS);  // Deselect MUX from flash
@@ -479,14 +477,14 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      output_low(CS_PIN_MISSION);  // Select SPI device
  
      // Send READ DATA COMMAND (0x13 or appropriate for your flash chip)
-     spi_xfer(SPIPORT3, READ_DATA_BYTES);
+     spi_xfer(MISSION_FM, READ_DATA_BYTES);
      // Send address bytes
-     spi_xfer(SPIPORT3, adsress[0]);
-     spi_xfer(SPIPORT3, adsress[1]);
-     spi_xfer(SPIPORT3, adsress[2]);
-     spi_xfer(SPIPORT3, adsress[3]);
+     spi_xfer(MISSION_FM, adsress[0]);
+     spi_xfer(MISSION_FM, adsress[1]);
+     spi_xfer(MISSION_FM, adsress[2]);
+     spi_xfer(MISSION_FM, adsress[3]);
      // Read the requested number of bytes
-         Data_return = spi_xfer(SPIPORT3, 0x00);  // Send dummy byte to receive data
+         Data_return = spi_xfer(MISSION_FM, 0x00);  // Send dummy byte to receive data
  
      output_high(CS_PIN_MISSION);  // Deselect SPI device after reading
      output_high(MX_PIN_ADCS);  //Deselect MUX from flash
@@ -495,11 +493,11 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
  void READ_CHIP_ID_OF() {
      int8 chip_id[8];
      output_low(CS_PIN_1);  // Lower the CS PIN
-     spi_xfer(SPIPORT, READ_ID);  // READ ID COMMAND (0x9F)
+     spi_xfer(MAIN_FM, READ_ID);  // READ ID COMMAND (0x9F)
      
      // Receive 8 bytes of chip ID
      for (int i = 0; i < 8; i++) {
-         chip_id[i] = spi_xfer(SPIPORT, 0x00);  // Send dummy bytes to receive data
+         chip_id[i] = spi_xfer(MAIN_FM, 0x00);  // Send dummy bytes to receive data
          fprintf(EXT, "%02X ", chip_id[i]);
      }
      fprintf(EXT,"\n");
@@ -510,11 +508,11 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      int8 chip_id[8];
      output_low(MX_PIN_COM);
      output_low(CS_PIN_COM);  // Lower the CS PIN
-     spi_xfer(SPIPORT2, READ_ID);  // READ ID COMMAND (0x9F)
+     spi_xfer(COM_FM, READ_ID);  // READ ID COMMAND (0x9F)
      
      // Receive 8 bytes of chip ID
      for (int i = 0; i < 8; i++) {
-         chip_id[i] = spi_xfer(SPIPORT2, 0x00);  // Send dummy bytes to receive data
+         chip_id[i] = spi_xfer(COM_FM, 0x00);  // Send dummy bytes to receive data
          fprintf(EXT, "%02X ", chip_id[i]);
      }
      fprintf(EXT,"\n");
@@ -527,11 +525,11 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      int8 chip_id[8];
      output_low(MX_PIN_ADCS);
      output_low(CS_PIN_MISSION);  // Lower the CS PIN
-     spi_xfer(SPIPORT3, READ_ID);  // READ ID COMMAND (0x9F)
+     spi_xfer(MISSION_FM, READ_ID);  // READ ID COMMAND (0x9F)
      
      // Receive 8 bytes of chip ID
      for (int i = 0; i < 8; i++) {
-         chip_id[i] = spi_xfer(SPIPORT3, 0x00);  // Send dummy bytes to receive data
+         chip_id[i] = spi_xfer(MISSION_FM, 0x00);  // Send dummy bytes to receive data
          fprintf(EXT, "%02X ", chip_id[i]);
      }
      fprintf(EXT,"\n");
@@ -539,7 +537,7 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      output_high(CS_PIN_MISSION);  // Raise CS PIN back
      output_high(MX_PIN_ADCS);
  }
-//  void READ_CHIP_ID_GENERIC(int SPIPORT, int CS_PIN, int MX_PIN) {
+//  void READ_CHIP_ID_GENERIC(int MAIN_FM, int CS_PIN, int MX_PIN) {
 //     int8 chip_id[8];
 
 //     // Lower MUX pin if applicable
@@ -551,11 +549,11 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
 //     output_low(CS_PIN);
 
 //     // Send READ ID command
-//     spi_xfer(SPIPORT, READ_ID);
+//     spi_xfer(MAIN_FM, READ_ID);
 
 //     // Receive 8 bytes of chip ID
 //     for (int i = 0; i < 8; i++) {
-//         chip_id[i] = spi_xfer(SPIPORT, 0x00);  // Send dummy bytes to receive data
+//         chip_id[i] = spi_xfer(MAIN_FM, 0x00);  // Send dummy bytes to receive data
 //         fprintf(EXT, "%02X ", chip_id[i]);    // Print each byte in hex
 //     }
 //     fprintf(EXT, "\n");
@@ -595,20 +593,20 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      fprintf(EXT, "POWER ON!\n");
      //EPS power control all disabled when startup, using menu function will turn on
      output_low(EN_SUP_3V3_1);
-     output_low(EN_SUP_3V3_2 );
+     output_high(EN_SUP_3V3_2 );
      output_low(EN_SUP_3V3_DAQ);
      output_low(EN_SUP_UNREG);
      output_low(EN_SUP_5V0);
      output_low(MVCAM_PWR);
-     output_low(OVCAM_PWR);
-     output_low(ADCS_PWR); //turns on the power of ADCS instantly 
+     output_high(OVCAM_PWR);
+     output_high(ADCS_PWR); //turns on the power of ADCS instantly 
      output_high(CS_PIN_1);
      output_high(CS_PIN_COM );
-     output_high(CS_PIN_MISSION );
-     output_high(MX_PIN_OVCAM );
-     output_high(MX_PIN_MVCAM );
-     output_high(MX_PIN_ADCS );
-     output_high(MX_PIN_COM );
+     output_high(CS_PIN_MISSION);
+     output_high(MX_PIN_OVCAM);   // default mux to camera connection in high state, low to connect to OBC to flash
+     output_high(MX_PIN_MVCAM ); // default mux to camera connection in high state, low to connect to OBC to flash
+     output_high(MX_PIN_ADCS );  // default mux to ADCS connection in high state, low to connect to OBC to flash
+     output_high(MX_PIN_COM );   // IDK 
      
      fprintf(EXT, "Digital pin out configured \n");
          
@@ -634,10 +632,7 @@ unsigned int8* READ_DATA_NBYTES_ADCS(unsigned int32 ADDRESS, unsigned short data
      rtc_read(&read_clock);
      read_clock.tm_year - 2000; 
      fprintf(EXT, "\r%02u/%02u/20%02u %02u:%02u:%02u", read_clock.tm_mon, read_clock.tm_mday, read_clock.tm_year , read_clock.tm_hour, read_clock.tm_min, read_clock.tm_sec);
-
      fprintf(EXT, "RTCC setup finished!\n");
-     fprintf(EXT, "RTCC setup finished!\n");
- 
  }
  
  //this function will receive from EPS and sent to external port of EXT single character by character   
@@ -671,89 +666,170 @@ int8 adcs_mission[3] = {0x33, 0x05, 0x05}; // mission command for ADCS all senso
 int8 adcs_mag[3] = {0x22, 0x01, 0x05}; // mag each 9 bytes for measurement
 int8 adcs_gyro[3] = {0x11, 0x01, 0x05}; // gyro each 9 bytes for measurement 
 int8 last_adcs[5] = {0x00, 0x00, 0x00, 0x00, 0x00}; // last command for ADCS 
+int8 adcs_quick[3] = {0x33, 0x05, 0x01}; // quick mission for ADCS 
+                // first byte is measurement size /9 byte/, second byte is measurement count
                 // (how many measurements are taken), (last address of the data)x4 not inverted
                 // we will multiply measurement size and how many measurements are taken and subtract from the last address
                 // to get the first measurement address of the data
                 // later we will read the data from the first address to the last address
 int8 adcs_status_address = 0x00020000; // status address of the adcs first byte is measrument count /each 9 byte/, last 4 is last address
 int8 adcs_gyro_first_address = 0x00030000; // first address of the gyro data 
- void adcs_mission_mode(void){
-     output_high(ADCS_PWR);
-delay_ms(1000);
-READ_CHIP_ID_OF_ADCS();
-fprintf(EXT, "deleting command address of the adcs\n");
-SECTOR_ERASE_OF_ADCS(0x00000000);
-delay_ms(100);
-//SECTOR_ERASE_OF_ADCS(0x00020000);
-delay_ms(100);
-fprintf(EXT, "Command address of the adcs is deleted!\n");
-delay_ms(100);
-fprintf(EXT, "Sending command to the adcs\n");
 
-// Write and read from ADCS flash memory
-fprintf(EXT, "Starting to write data in ADCS flash memory\n");
-WRITE_DATA_NBYTES_ADCS(0x00000000, adcs_gyro, sizeof(adcs_gyro));
-delay_ms(100);
-read_data_adcs = READ_DATA_NBYTES_ADCS(0x00000000, sizeof(adcs_gyro));
-delay_ms(100);
-for (int i = 0; i < sizeof(adcs_gyro); i++) {
-    fprintf(EXT, "%c", read_data_adcs[i]);
-    delay_ms(2);
-}
-fprintf(EXT, "\n"); 
-fprintf(EXT, "ADCS command is written!\n");
 
-// Wait 70 seconds for ADCS to complete the mission
-for (int i = 0; i < 7; i++) {
-    fprintf(EXT, "waiting for adcs to finish 70s/%d0s\n", i);
-    delay_ms(10000);
-}
-fprintf(EXT, "ADCS command is finished!\n");
+void adcs_mission_mode(void) {
+    // 1. Local storage to prevent pointer corruption
+    unsigned int8 local_buffer[10]; 
+    unsigned int8 adcs_status = 0;
+    unsigned int32 last_adcs_address = 0;
+    unsigned int32 first_adcs_data_address = 0;
 
-// Read status and last address from ADCS
-fprintf(EXT, "reading the status address of the adcs!\n");
-read_data_adcs = READ_DATA_NBYTES_ADCS(0x00020000, 5); // Read 5 bytes: 1 for status, 4 for last address
-delay_ms(100);
+    output_high(ADCS_PWR);
+    delay_ms(1000);
+    
+    READ_CHIP_ID_OF_ADCS(); // Verify hardware is awake
 
-// Extract status and last address
-int8 adcs_status = read_data_adcs[0];  // Number of measurements (status)
-int32 last_adcs_address = 0;
-for (int i = 1; i < 5; i++) {
-    last_adcs_address = (last_adcs_address << 8) | (int8)read_data_adcs[i]; // Combine 4 bytes into a 32-bit address
-}
-fprintf(EXT, "ADCS status: %d, last address: 0x%08x\n", adcs_status, last_adcs_address);
+    // Clear previous command area
+    fprintf(EXT, "Erasing ADCS command sector...\n");
+    SECTOR_ERASE_OF_ADCS(0x00000000);
+    delay_ms(200);
 
-// Handle mission status
-if (adcs_status <= 0) {  // Assuming 0 or -1 indicates failure based on your original code
-    fprintf(EXT, "ADCS mission failed!\n");
-    while (TRUE) {
-        fprintf(EXT, "ADCS mission failed!\n");
-        delay_ms(5000);
+    // Write Quick Mission Command: {0x33, 0x05, 0x01}
+    fprintf(EXT, "Sending command: 0x33 0x05 0x01\n");
+    WRITE_DATA_NBYTES_ADCS(0x00000000, adcs_quick, 3);
+    delay_ms(100);
+
+    // Verification Read
+    read_data_adcs = READ_DATA_NBYTES_ADCS(0x00000000, 3);
+    fprintf(EXT, "Verified Command: %02x %02x %02x\n", read_data_adcs[0], read_data_adcs[1], read_data_adcs[2]);
+
+    // Wait 210 seconds (ADCS is executing and writing measurements to Flash)
+    for (int i = 0; i <= 21; i++) {
+        fprintf(EXT, "ADCS Busy: %ds / 210s\n", i * 10);
+        delay_ms(10000);
     }
-} else {
-    fprintf(EXT, "ADCS mission success with %d measurements!\n", adcs_status);
 
-    // Calculate the first data address
-    int32 first_adcs_data_address = last_adcs_address - (adcs_status * 9); // Each measurement is 9 bytes
-    fprintf(EXT, "First data address: 0x%08x\n", first_adcs_data_address);
+    // Read status (1 byte) and last address (4 bytes)
+    fprintf(EXT, "Reading status from 0x00020000...\n");
+    read_data_adcs = READ_DATA_NBYTES_ADCS(0x00020000, 5);
+    
+    // Copy to local variables immediately to prevent pointer issues
+    adcs_status = (unsigned int8)read_data_adcs[0];
+    last_adcs_address = 0;
+    for (int i = 1; i < 5; i++) {
+        last_adcs_address = (last_adcs_address << 8) | (unsigned int8)read_data_adcs[i];
+    }
 
-    // Read and print each measurement
-    for (int i = 0; i < adcs_status; i++) {
-        int32 current_address = first_adcs_data_address + (i * 9);
-        read_data_adcs = READ_DATA_NBYTES_ADCS(current_address, 9); // Read 9 bytes per measurement
-        fprintf(EXT, "Measurement %d at address 0x%08x: ", i + 1, current_address);
+    // CRITICAL CHECK: Validate data before looping
+    // In Flash, 0xFF means "Nothing written" or "Hardware Error"
+    if (adcs_status == 0x00 || adcs_status == 0xFF) {
+        fprintf(EXT, "FAILED: ADCS returned invalid status: 0x%02X\n", adcs_status);
+        output_low(ADCS_PWR);
+        return; 
+    }
+
+    fprintf(EXT, "SUCCESS: %u measurements found. Last Addr: 0x%08lx\n", adcs_status, last_adcs_address);
+
+    // Calculate start address: Each measurement is 9 bytes
+    first_adcs_data_address = last_adcs_address - ((unsigned int32)adcs_status * 9);
+    fprintf(EXT, "Data Start: 0x%08lx\n", first_adcs_data_address);
+
+    // Read and print each measurement block
+    for (unsigned int8 i = 0; i < adcs_status; i++) {
+        unsigned int32 current_address = first_adcs_data_address + (i * 9);
+        
+        // Read 9 bytes of sensor data
+        read_data_adcs = READ_DATA_NBYTES_ADCS(current_address, 9);
+        
+        fprintf(EXT, "Data [%u] @ 0x%08lx: ", i + 1, current_address);
         for (int j = 0; j < 9; j++) {
-            fprintf(EXT, "%02x ", (int8)read_data_adcs[j]); // Print each byte in hex
+            fprintf(EXT, "%02x ", (unsigned int8)read_data_adcs[j]);
         }
         fprintf(EXT, "\n");
-        delay_ms(2); // Small delay between reads
+        delay_ms(5); 
     }
+
+    output_low(ADCS_PWR); // Mission complete, save power
 }
-output_low(ADCS_PWR);
- }
+
+void adcs_mission_mode_dumm(void) {
+    // 1. Local storage to prevent pointer corruption
+    unsigned int8 local_buffer[10]; 
+    unsigned int8 adcs_status = 0;
+    unsigned int32 last_adcs_address = 0;
+    unsigned int32 first_adcs_data_address = 0;
+    output_high(EN_SUP_3V3_DAQ); // Enable 3.3V supply for DAQ
+    output_high(ADCS_PWR);
+    delay_ms(1000);
+    
+    READ_CHIP_ID_OF_ADCS(); // Verify hardware is awake
+
+    // // Clear previous command area
+    // fprintf(EXT, "Erasing ADCS command sector...\n");
+    // SECTOR_ERASE_OF_ADCS(0x00000000);
+    // delay_ms(200);
+
+    // // Write Quick Mission Command: {0x33, 0x05, 0x01}
+    // fprintf(EXT, "Sending command: 0x33 0x05 0x01\n");
+    // WRITE_DATA_NBYTES_ADCS(0x00000000, adcs_quick, 3);
+    // delay_ms(100);
+
+    // // Verification Read
+    // read_data_adcs = READ_DATA_NBYTES_ADCS(0x00000000, 3);
+    // fprintf(EXT, "Verified Command: %02x %02x %02x\n", read_data_adcs[0], read_data_adcs[1], read_data_adcs[2]);
+
+    // // Wait 210 seconds (ADCS is executing and writing measurements to Flash)
+    // for (int i = 0; i <= 21; i++) {
+    //     fprintf(EXT, "ADCS Busy: %ds / 210s\n", i * 10);
+    //     delay_ms(10000);
+    // }
+
+    // Read status (1 byte) and last address (4 bytes)
+    fprintf(EXT, "Reading status from 0x00020000...\n");
+    read_data_adcs = READ_DATA_NBYTES_ADCS(0x00020000, 5);
+    
+    // Copy to local variables immediately to prevent pointer issues
+    adcs_status = (unsigned int8)read_data_adcs[0];
+    last_adcs_address = 0;
+    for (int i = 1; i < 5; i++) {
+        last_adcs_address = (last_adcs_address << 8) | (unsigned int8)read_data_adcs[i];
+    }
+
+    // CRITICAL CHECK: Validate data before looping
+    // In Flash, 0xFF means "Nothing written" or "Hardware Error"
+    if (adcs_status == 0x00 || adcs_status == 0xFF) {
+        fprintf(EXT, "FAILED: ADCS returned invalid status: 0x%02X\n", adcs_status);
+        output_low(ADCS_PWR);
+        return; 
+    }
+
+    fprintf(EXT, "SUCCESS: %u measurements found. Last Addr: 0x%08lx\n", adcs_status, last_adcs_address);
+
+    // Calculate start address: Each measurement is 19 bytes
+    first_adcs_data_address = last_adcs_address - ((unsigned int32)adcs_status * 19);
+    fprintf(EXT, "Data Start: 0x%08lx\n", first_adcs_data_address);
+
+    // Read and print each measurement block
+    for (unsigned int8 i = 0; i < adcs_status; i++) {
+        unsigned int32 current_address = first_adcs_data_address + (i * 19);
+        
+        // Read 19 bytes of sensor data
+        read_data_adcs = READ_DATA_NBYTES_ADCS(current_address, 19);
+        
+        // fprintf(EXT, "Data [%u] @ 0x%08lx: ", i + 1, current_address);
+        for (int j = 0; j < 19; j++) {
+            fprintf(EXT, "%02x ", (unsigned int8)read_data_adcs[j]);
+        }
+        fprintf(EXT, "\n");
+        delay_ms(5); 
+    }
+
+    output_low(ADCS_PWR); 
+    output_low(EN_SUP_3V3_DAQ); // Enable 3.3V supply for DAQ
+}
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  // eps functions 
- char cmd = 'G'; // Command character to trigger EPS
+char cmd = 'g'; // Command character to trigger EPS
+unsigned int8 eps_buffer[33];
 unsigned int8 temperature[7];
 unsigned int8 solar_panel_current[5];
 unsigned int8 solar_panel_voltage[5];
@@ -769,10 +845,31 @@ bool KS_OBC_STAT;
 bool KS_EPS_STAT;
 
 // Function to receive 33 bytes from EPS into the buffer
-void get_data(char* buffer) {
-    putc(cmd, EPS); // Send command to EPS
-    for (int8 i = 0; i < 33; i++) {
-        buffer[i] = fgetc(EPS); // Receive byte from EPS (blocks until received)
+void get_data(unsigned int8* buffer) {
+    unsigned int16 timeout = 0;
+    unsigned int8 start_byte = 0;
+
+    putc('g', EPS); // Send trigger command
+
+    // 1. SYNC STEP: Look for the start byte '}' (0x7D)
+    // This ignores all the <1> or trash bytes sent before the packet
+    while(start_byte != 0x7D && timeout < 5000) {
+        if(kbhit(EPS)) {
+            start_byte = fgetc(EPS);
+        }
+        delay_us(10);
+        timeout++;
+    }
+
+    if (start_byte != 0x7D) {
+        fprintf(EXT, "Timeout: EPS Header not found!\n");
+        return;
+    }
+
+    // 2. FILL STEP: Now that we found 0x7D, fill the rest of the 33 bytes
+    buffer[0] = start_byte; 
+    for (int8 i = 1; i < 33; i++) {
+        buffer[i] = fgetc(EPS); 
     }
 }
 
@@ -783,52 +880,152 @@ void send_data(char* buffer) {
     }
     printf(EXT, "\n"); // Newline after sending all bytes
 }
-// Function to store data
+
+/// Update store_eps_data for accuracy
 void store_eps_data(unsigned int8* buffer) {
+    // Check start '}' and end 'f' frames for data integrity
     if (buffer[0] == '}' && buffer[32] == 'f') {
         memcpy(temperature, &buffer[1], 7);
         memcpy(solar_panel_current, &buffer[8], 5);
         memcpy(solar_panel_voltage, &buffer[13], 5);
-        sc_pwr = buffer[18];
+        sc_pwr    = buffer[18];
         sc_i_sens = buffer[19];
         batt_i_sens = buffer[20];
-        batt_pwr = buffer[21];
+        batt_pwr  = buffer[21];
         raw_i_sens = buffer[22];
         raw_v_sens = buffer[23];
         batt_temp = buffer[24];
         memcpy(DCDC_output_i, &buffer[25], 5);
-        KS_OBC_STAT = buffer[30] != 0;
-        KS_EPS_STAT = buffer[31] != 0;
+        KS_OBC_STAT = (buffer[30] != 0);
+        KS_EPS_STAT = (buffer[31] != 0);
+    } else {
+        printf(EXT, "CRC/Framing Error! Start: %c, End: %c\n", buffer[0], buffer[32]);
     }
 }
+
 void print_table() {
-    printf(EXT, "%-15s | %-8s | %-12s\n", "Variable", "Original", "Processed (V/A)");
+    // Use a constant for the ADC conversion to ensure float precision
+    // Equation: (Value * Vref) / Res / Gain
+    const float conv_factor = 3.3 / 256.0 / 20.0;
+
+    printf(EXT, "\n%-15s | %-8s | %-12s\n", "Variable", "Raw", "Value (V/A)");
     printf(EXT, "--------------------------------------------------\n");
-    printf(EXT, "%-15s | %-8u | %.6f\n", "sc_pwr", sc_pwr, ((sc_pwr * 3.3) / 256.0) / 20.0);
-    printf(EXT, "%-15s | %-8u | %.6f\n", "sc_i_sens", sc_i_sens, ((sc_i_sens * 3.3) / 256.0) / 20.0);
-    printf(EXT, "%-15s | %-8u | %.6f\n", "raw_i_sens", raw_i_sens, ((raw_i_sens * 3.3) / 256.0) / 20.0);
-    printf(EXT, "%-15s | %-8u | %.6f\n", "raw_v_sens", raw_v_sens, ((raw_v_sens * 3.3) / 256.0) / 20.0);
-    printf(EXT, "%-15s | %-8u | %.6f\n", "batt_pwr", batt_pwr, ((batt_pwr * 3.3) / 256.0) / 20.0);
-    printf(EXT, "%-15s | %-8u | %.6f\n", "batt_i_sens", batt_i_sens, ((batt_i_sens * 3.3) / 256.0) / 20.0);
-    printf(EXT, "\n"); // Add a newline after the table
-    printf(EXT, "KS of OBC status is %d", KS_OBC_STAT);
-    printf(EXT, "KS of EPS status is %d", KS_EPS_STAT);
-}
-// Main function to test UART communication
-void eps_mission_mode(void) {
-    output_high(EN_SUP_3V3_DAQ); // Enable 3.3V supply for DAQ
-    printf(EXT, "EPS power on!\n");  // Initial message to EXT
-
-    char buffer[33]; // Buffer to hold 33 bytes
-
-        printf(EXT, "Sending request...\n");
-        get_data(buffer);          // Get data from EPS
-        store_eps_data(buffer);    // Parse buffer into variables
-        print_table();             // Print the table
-        send_data(buffer);         // Forward data to EXT
     
+    // Using (float) cast ensures the compiler uses floating point math
+    printf(EXT, "%-15s | %-8u | %.6f\n", "sc_pwr", sc_pwr, (float)sc_pwr * conv_factor);
+    printf(EXT, "%-15s | %-8u | %.6f\n", "sc_i_sens", sc_i_sens, (float)sc_i_sens * conv_factor);
+    printf(EXT, "%-15s | %-8u | %.6f\n", "raw_i_sens", raw_i_sens, (float)raw_i_sens * conv_factor);
+    printf(EXT, "%-15s | %-8u | %.6f\n", "raw_v_sens", raw_v_sens, (float)raw_v_sens * conv_factor);
+    printf(EXT, "%-15s | %-8u | %.6f\n", "batt_pwr", batt_pwr, (float)batt_pwr * conv_factor);
+    printf(EXT, "%-15s | %-8u | %.6f\n", "batt_i_sens", batt_i_sens, (float)batt_i_sens * conv_factor);
+    
+    printf(EXT, "OBC Status: %s | EPS Status: %s\n", 
+           KS_OBC_STAT ? "ON" : "OFF", 
+           KS_EPS_STAT ? "ON" : "OFF");
+}
+
+void eps_mission_mode(void) {
+    printf(EXT, "--- EPS MISSION STARTs ---\n");
+    unsigned int8 eps_buffer[33];
+    printf(EXT, "--- EPS MISSION START ---\n");
+    output_high(EN_SUP_3V3_DAQ); 
+    delay_ms(10); // Give DAQ time to stabilize
+
+    get_data(eps_buffer);      // Get 33 bytes
+    store_eps_data(eps_buffer); // Parse
+    print_table();             // Display
+    
+    // Correct way to forward the raw buffer for debugging
+    for(int i=0; i<33; i++) {
+        fprintf(EXT, "%02x ", eps_buffer[i]);
+    }
+    printf(EXT, "\n--- EPS MISSION END ---\n");
 }
  
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ // IHS functions
+// Changed return type to signed int8 to allow -1 error code
+// Helper function to wait for specific text from Camera
+int8 wait_for_cam_confirmation(unsigned int16 timeout_ms) {
+    char window[2] = {0, 0}; // Our small array to hold the last 2 chars
+    unsigned int32 timer = 0;
+
+    // Clear the software UART buffer first to remove old data
+    while(kbhit(CAM)) { fgetc(CAM); } 
+
+    while(timer < timeout_ms) {
+        if(kbhit(CAM)) {
+            // Slide the window (This is what you meant by array processing)
+            window[0] = window[1];
+            window[1] = fgetc(CAM);
+            
+            // Optional: Send to debug terminal
+            fputc(window[1], EXT); 
+
+            // Check the array
+            if (window[0] == 'O' && window[1] == 'K') {
+                return 1; // "OK" found!
+            }
+        } else {
+            delay_ms(1);
+            timer++;
+        }
+    }
+    return 0; // Timeout
+}
+
+int8 CAM_MISSION_MAIN (unsigned int8 cam_select, unsigned int8 mission_number) {
+    unsigned int8 cam_response; 
+    
+    fprintf(EXT, "\n--- CAM MISSION START ---\n");
+
+    // 1. Send Capture Command (Append 'x' to end Arduino parsing instantly)
+    if (cam_select == 1) {
+        fprintf(CAM, "c%u", mission_number); 
+        fprintf(EXT, "Command Sent: c%u (Capture)\n", mission_number);
+    } else {
+        fprintf(CAM, "v%u", mission_number); 
+        fprintf(EXT, "Command Sent: v%u (Capture)\n", mission_number);
+    }
+
+    // 2. THE FIX: Wait for "CAM1 SAVE... OK"
+    // This cleans the text out of the buffer so it doesn't corrupt the image
+    fprintf(EXT, "Waiting for Save Confirmation...\n");
+    if (!wait_for_cam_confirmation(5000)) { // 5 second timeout
+        fprintf(EXT, "ERROR: Camera timed out or failed to save!\n");
+        return -1;
+    }
+    fprintf(EXT, "\nConfirmation Received! Requesting Download...\n");
+    
+    delay_ms(100); // Short safety pause
+
+    // 3. Request Binary Download
+    if (cam_select == 1) {
+        fprintf(CAM, "d%u", mission_number);
+    } else {
+        fprintf(CAM, "f%u", mission_number);
+    }
+
+    // 4. Receive Binary Data
+    // No delays here, just fast reading
+    unsigned int32 inactivity_timer = 0;
+    unsigned int32 bytes_read = 0;
+    
+    while (inactivity_timer < 100000) { 
+        if (kbhit(CAM)) {
+            cam_response = fgetc(CAM); 
+            fputc(cam_response, EXT); // Send raw byte to terminal
+            bytes_read++;
+            inactivity_timer = 0;     // Reset timer because we got data
+        }
+        inactivity_timer++;
+    }
+
+    fprintf(EXT, "\n--- CAM MISSION ENDED (Bytes: %lu) ---\n", bytes_read);
+    return 0;
+}
+
  int8 update_shutdown_count(void) {
      fprintf(EXT, "Shutdown count started\n");
  
@@ -1204,7 +1401,7 @@ void main_menu(void) {
         //fprintf(EXT, "    press h: IHC Mission start\n");
         //fprintf(EXT, "    press i: SEL current Measurement\n");
         //fprintf(EXT, "    press j: H8 COM Reset\n");
-        fprintf(EXT, "    press k: UART repeater of EPS\n");
+        fprintf(EXT, "    press k: UART TEST of EPS\n");
         fprintf(EXT, "    press l: testmode \n");
         fprintf(EXT, "    press x: Exit Main Menu\n");
         fprintf(EXT, "    DO NOT USE CAPITAL CHARACTERS TO WRITE!\n\n");
@@ -1253,8 +1450,8 @@ void main_menu(void) {
                 // h8_com_reset();
                 break;
             case 'k':
-                fprintf(EXT, "UART Repeater Initialized.\n");
-                uart_repeater();
+                fprintf(EXT, "UART TEST Initialized.\n");
+                eps_mission_mode();
                 break;
             case 'l':
                 fprintf(EXT, "Testmode initialized\n");
@@ -1269,30 +1466,9 @@ void main_menu(void) {
         }
     }
 }
-//void receive_16_bytes(int16* buffer) {
-//    for (int8 i = 0; i < 33; i++) {
-//        buffer[i] = getc(EPS);  // Blocks until a byte is received
-//    }
-//}
-//void EPS_DATA_ACQUISITION (){
-//        output_high(EN_SUP_3V3_DAQ);
-//    printf(EXT,"Power on!\n");
-//    int16 buffer[33];  // Buffer to hold the 16 bytes
-//    while (1) {
-//        printf(EXT,"sending request...\n");
-//        putc(cmd, EPS);
-//        // Receive 16 bytes into the buffer
-//        printf(EXT,"Waiting to respond...\n");
-//        receive_16_bytes(buffer);
-//        // Send the 16 bytes back via UART
-//        for (int8 i = 0; i < 33; i++) {
-//            putc(buffer[i], EXT);
-//        }
-//        printf("\n");
-//    }
-//}
 
-#include <flashoperation.h>
+
+// #include <flashoperation.h>
 
 
 
