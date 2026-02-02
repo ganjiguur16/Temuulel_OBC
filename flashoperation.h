@@ -5,17 +5,14 @@
  * Created on October 22, 2024, 3:31 PM
  */
 
- #ifndef MT25Q_H
-#define MT25Q_H
+//  #ifndef flashoperation.h
+#define flashoperation.h
 
-// #ifdef __INTELLISENSE__
-// // CCS C type stubs for VS Code IntelliSense only
 // typedef int int32;
 // typedef unsigned int uint32;
 // typedef char int8;
 // typedef unsigned char uint8;
 // typedef short int16;
-// typedef unsigned short uint16;
 // #endif
 
 #ifdef __cplusplus
@@ -57,5 +54,3 @@ void LOOP_HIGH_SAMP_HK_ADDRESS(void);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* MT25Q_H */
